@@ -1,0 +1,53 @@
+version: '3' 
+services:
+  db:
+    container_name: postgres
+    image: postgres
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+    ports:
+      - "5432:5432"
+    restart: always
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - "5051:443"
+      - "5050:80"
+    depends_on:
+      - db
+    restart: always
+  web:
+    container_name: django
+    image: django
+    build: .
+    # command: python manage.py runserver 0.0.0.0:8000
+    tty: true
+    volumes:
+      - ./code:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    restart: always
+  redis:
+    container_name: redis
+    image: redis:5
+    ports:
+      - "6379:6379"
+    depends_on:
+      - web
+    restart: always
+  selenium:
+    container_name: selenium
+    image: selenium/standalone-chrome
+    ports:
+      - "4444:4444"
+    depends_on:
+      - web
+  
