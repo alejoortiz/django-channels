@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # stop containers
-docker-compose stop & wait $!
+docker-compose down & wait $!
 # start containers
 docker-compose up -d --build & wait $!
 # check images
